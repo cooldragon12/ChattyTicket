@@ -78,3 +78,43 @@
   background-color: var(--secondary);
   color: var(--background_cc);
 }
+
+.shadow{
+  filter: invert(10) grayscale(100);
+  fill: #53212B;
+}
+.card-images{
+  
+  position: absolute;
+}
+.card-images:nth-child(1){
+  
+  z-index: 5;
+}
+.card-images:nth-child(2){
+  
+  z-index: 4;
+}
+.card-images:nth-child(3){
+  
+  z-index: 3;
+}
+.card-images:nth-child(4){
+  
+  z-index: 6;
+}
+
+.shadow:nth-child(1){
+  left: 0.5rem;
+  top:0.5rem;
+}
+.shadow:nth-child(2){
+  left:1.5rem;
+  top:1.0rem;
+
+}
+.shadow:nth-child(3){
+  left:2.5rem;
+  top:1.5rem;
+
+}

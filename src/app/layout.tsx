@@ -1,10 +1,12 @@
 
 import './globals.css'
 import { Inter } from 'next/font/google'
-import { Suspense, lazy } from 'react'
+import { Suspense} from 'react'
+import dynamic from "next/dynamic"
 import StyleProvider from '@/components/StyleProvider'
+import Loading from './loading'
 // import NavigationBar from '@/components/NavigationBar'
-const NavigationBar = lazy(() => import('@/components/NavigationBar'))
+const NavigationBar = dynamic(() => import('@/components/NavigationBar'))
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -21,7 +23,7 @@ export default function RootLayout({
     <StyleProvider>
         <html lang="en">
           <body className={inter.className}>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense unstable_expectedLoadTime={1000} fallback={<Loading/>}>
               <NavigationBar />
               {children}
             </Suspense>
