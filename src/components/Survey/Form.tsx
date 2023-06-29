@@ -1,11 +1,10 @@
 "use client"
-import {lazy, useState} from 'react'
-import { useForm, isEmail, matches, isInRange, isNotEmpty } from '@mantine/form';
-import {Flex, TextInput, Stepper,Select,  NumberInput, Checkbox, Radio, Switch, Slider, createStyles, Button, Group, useMantineTheme, useMantineColorScheme, Container, Box, Divider, BackgroundImage, Text, MediaQuery} from '@mantine/core';
-import Image from 'next/image';
-
+import { useState } from 'react'
+import { useForm, isEmail, matches, isNotEmpty } from '@mantine/form';
+import { Flex, TextInput, Stepper, Select, NumberInput, Checkbox, Radio, Button, Group, useMantineTheme, useMantineColorScheme, Container, Box, Divider, BackgroundImage, Text, MediaQuery } from '@mantine/core';
 
 import FadeSurveyImage from "@/assets/images/fade.jpg";
+import DropPhoto from './Dropzone';
 
 const SoutEastAsiaCountries = [
     "Indonesia",
@@ -41,18 +40,18 @@ const RANK_CHOICES = [
 
     "Bronze",
 
-    "Silver", 
-    
-    "Gold", 
-   
-    "Platinum", 
-   
-    "Diamond", 
-   
+    "Silver",
+
+    "Gold",
+
+    "Platinum",
+
+    "Diamond",
+
     "Ascendant",
-   
+
     "Immortal",
-   
+
     "Radiant",
 ]
 
@@ -64,7 +63,7 @@ const SERVER_CHOICES = [
 export default function SurveyForm() {
     const [active, setActive] = useState(0);
     const [highestStepVisited, setHighestStepVisited] = useState(active);
-    
+
     const form = useForm({
         initialValues: {
             email: '',
@@ -126,124 +125,123 @@ export default function SurveyForm() {
     const handleStepChange = (nextStep: number) => {
         const isOutOfBounds = nextStep > 3 || nextStep < 0;
         form.validate();
-        
+
         if (isOutOfBounds) {
-          return;
+            return;
         }
-        if(form.isValid("username") && form.isValid("email") && form.isValid("Country") && form.isValid("in_game_rank") && form.isValid("in_game_rank_level") && form.isValid("average_hours") && form.isValid("frequency") && form.isValid("server")){
+        if (form.isValid("username") && form.isValid("email") && form.isValid("Country") && form.isValid("in_game_rank") && form.isValid("in_game_rank_level") && form.isValid("average_hours") && form.isValid("frequency") && form.isValid("server")) {
             setActive(nextStep);
             setHighestStepVisited((hSC) => Math.max(hSC, nextStep));
         }
-      };
+    };
     const shouldAllowSelectStep = (step: number) => highestStepVisited >= step && active !== step;
+   
     return (
-        <Flex direction={"column"} w={"100vw"} h={"100vh"} justify={"center"}  align={"center"}>
-            <Stepper mt="10rem" color="red"  active={active} onStepClick={setActive} breakpoint="lg">
+        <Flex direction={"column"} w={"100vw"} h={"100vh"} justify={"center"} align={"center"}>
+            <Stepper mt="10rem" color="red" active={active} onStepClick={handleStepChange} breakpoint="lg">
                 <Stepper.Step label="Basic Information" description="Contains the basic information of user and their gameplay" allowStepSelect={shouldAllowSelectStep(0)}>
-                    <Flex sx={(theme)=>({
+                    <Flex sx={(theme) => ({
                         boxShadow: theme.shadows.md,
                         padding: "2rem",
                         borderRadius: "1rem",
                         width: "90vw",
                         height: "65vh",
-                    })} justify={"center"}  align={"center"} w="100%" h="90%">
+                    })} justify={"center"} align={"center"} w="100%" h="90%">
                         <MediaQuery smallerThan={1024} styles={{
                             width: "100%",
                         }}>
 
-                        <Flex w={"50%"} justify={"center"} align={"center"}>
-                            <Flex w="90%" direction={"column"} justify={"center"} align={"center"}>
-                                <Flex gap="1rem" w={"100%"}>
-                                    <TextInput 
-                                    w="100%"
-                                    label="Name"
-                                    placeholder="John Doe (Optional)"
-                                    
-                                    {...form.getInputProps("name")}
-                                    />
-                                    <TextInput 
-                                    w="100%"
-                                    withAsterisk
-                                    label="Username"
-                                    placeholder="username#1234"
-                                    {...form.getInputProps("username")}
-                                    />
-                                </Flex>
-                                <TextInput 
-                                w="100%"
-                                withAsterisk
-                                label="E-mail"
-                                placeholder="youremail@example.com"
-                                {...form.getInputProps("email")}
-                                />
-                                <Flex gap="1rem" w={"100%"}>
-                                    <NumberInput min={1}  withAsterisk
-                                        label="Age"
-                                        placeholder="14"
-                                        {...form.getInputProps("age")}
+                            <Flex w={"50%"} justify={"center"} align={"center"}>
+                                <Flex w="90%" direction={"column"} justify={"center"} align={"center"}>
+                                    <Flex gap="1rem" w={"100%"}>
+                                        <TextInput
+                                            w="100%"
+                                            label="Name"
+                                            placeholder="John Doe (Optional)"
+
+                                            {...form.getInputProps("name")}
                                         />
-                                    <Radio.Group withAsterisk  label="Pronoun" {...form.getInputProps("gender")}>
-                                        <Radio p={4} color='red' value="he/him" label="He/Him"/>
-                                        <Radio p={4} color='red' value="she/her" label="She/Her"/>
-                                        <Radio p={4} color='red'  value="them/they" label="They/Them"/>
-                                    </Radio.Group>
+                                        <TextInput
+                                            w="100%"
+                                            withAsterisk
+                                            label="Username"
+                                            placeholder="username#1234"
+                                            {...form.getInputProps("username")}
+                                        />
+                                    </Flex>
+                                    <TextInput
+                                        w="100%"
+                                        withAsterisk
+                                        label="E-mail"
+                                        placeholder="youremail@example.com"
+                                        {...form.getInputProps("email")}
+                                    />
+                                    <Flex gap="1rem" w={"100%"}>
+                                        <NumberInput min={1} withAsterisk
+                                            label="Age"
+                                            placeholder="14"
+                                            {...form.getInputProps("age")}
+                                        />
+                                        <Radio.Group withAsterisk label="Pronoun" {...form.getInputProps("gender")}>
+                                            <Radio p={4} color='red' value="he/him" label="He/Him" />
+                                            <Radio p={4} color='red' value="she/her" label="She/Her" />
+                                            <Radio p={4} color='red' value="them/they" label="They/Them" />
+                                        </Radio.Group>
+                                    </Flex>
+                                    <Flex gap="1rem" w={"100%"}>
+                                        <Select w="100%" withAsterisk label="Country" placeholder="Select Country (e.i Philippines)" searchable data={SoutEastAsiaCountries} {...form.getInputProps("country")} />
+                                        <TextInput w="100%" label="Province" placeholder="Province (Optional)" {...form.getInputProps("province")} />
+                                    </Flex>
+                                    <Divider label="Game Related" w="100%" m="1rem" />
+                                    <Flex gap="1rem" w={"100%"}>
+                                        <NumberInput min={1} label="Hours played per week (atleast average)" withAsterisk {...form.getInputProps("average_hours")} />
+                                        <NumberInput min={1} label="Game played per week (frequency)" withAsterisk {...form.getInputProps("frequency")} />
+                                    </Flex>
+                                    <Flex gap="1rem" w={"100%"}>
+                                        <Select w="100%" withAsterisk label="Rank" placeholder="Select Rank (Radiant)" searchable data={RANK_CHOICES} {...form.getInputProps("in_game_rank")} />
+                                        <NumberInput w="100%" min={1} label="Rank Level" disabled={form.values.in_game_rank === "Radiant" ? true : false} withAsterisk {...form.getInputProps("in_game_rank_level")} />
+                                    </Flex>
+                                    <Select withAsterisk w={"100%"} label="Your often use server" placeholder="Hong Kong" searchable data={SERVER_CHOICES} {...form.getInputProps("server")} />
+
                                 </Flex>
-                                <Flex gap="1rem" w={"100%"}>
-                                    <Select  w="100%" withAsterisk label="Country" placeholder="Select Country (e.i Philippines)" searchable data={SoutEastAsiaCountries} {...form.getInputProps("country")}/>
-                                    <TextInput  w="100%" label="Province" placeholder="Province (Optional)" {...form.getInputProps("province")}/>
-                                </Flex>
-                                <Divider label="Game Related" w="100%" m="1rem" />
-                                <Flex gap="1rem" w={"100%"}>
-                                    <NumberInput min={1} label="Hours played per week (atleast average)"  withAsterisk {...form.getInputProps("average_hours")}/>
-                                    <NumberInput min={1} label="Game played per week (frequency)"  withAsterisk {...form.getInputProps("frequency")}/>
-                                </Flex>
-                                <Flex gap="1rem" w={"100%"}>
-                                    <Select   w="100%" withAsterisk label="Rank" placeholder="Select Rank (Radiant)" searchable data={RANK_CHOICES} {...form.getInputProps("in_game_rank")}/>
-                                    <NumberInput w="100%" min={1} label="Rank Level" disabled={form.values.in_game_rank === "Radiant"? true:false}  withAsterisk {...form.getInputProps("in_game_rank_level")}/>
-                                </Flex>
-                                <Select withAsterisk   w={"100%"} label="Your often use server" placeholder="Hong Kong" searchable data={SERVER_CHOICES} {...form.getInputProps("server")}/>
-                            
                             </Flex>
-                        </Flex>
                         </MediaQuery>
                         <MediaQuery smallerThan={1024} styles={{
                             display: "none"
                         }}>
-                        <Flex direction={"column"} w={"50%"} h="100%" justify={"center"} align={"center"} m={0}>
-                            <BackgroundImage  w={"100%"} h="25rem"src={FadeSurveyImage.src} />
-                            <Flex w={"100%"} h="10%" direction={"column"} justify={"center"} align={"center"}>
-                                <Text color="text" weight={"bold"}>Why do we need this?</Text>
-                                <Text color="text" >We need this to know your basic information and your gameplay to match you with the right people.</Text>
+                            <Flex direction={"column"} w={"50%"} h="100%" justify={"center"} align={"center"} m={0}>
+                                <BackgroundImage w={"100%"} h="25rem" src={FadeSurveyImage.src} />
+                                <Flex w={"100%"} h="10%" direction={"column"} justify={"center"} align={"center"}>
+                                    <Text color="text" weight={"bold"}>Why do we need this?</Text>
+                                    <Text color="text" >We need this to know your basic information and your gameplay to match you with the right people.</Text>
+                                </Flex>
                             </Flex>
-                        </Flex>
                         </MediaQuery>
                     </Flex>
                 </Stepper.Step>
                 <Stepper.Step label="Entries" description="Input text or image related to the chat">
-                    <Flex sx={(theme)=>({
-                            boxShadow: theme.shadows.md,
-                            padding: "2rem",
-                            borderRadius: "1rem",
-                            width: "90vw",
-                            height: "65vh",
-                        })} justify={"center"}  align={"center"} w="100%" h="90%">
-                            <Flex w={"50%"} justify={"center"} align={"center"}>
-                                
-                            </Flex>
-                            <Flex direction={"column"} w={"50%"} h="100%" justify={"center"} align={"center"} m={0}>
-                                
-                            </Flex>
+                    <Flex sx={(theme) => ({
+                        boxShadow: theme.shadows.md,
+                        padding: "2rem",
+                        borderRadius: "1rem",
+                        width: "90vw",
+                        height: "65vh",
+                    })} justify={"center"} align={"center"} w="100%" h="90%">
+                        <Flex w={"50%"} justify={"center"} align={"center"}>
+                           <DropPhoto/>
                         </Flex>
+
+                    </Flex>
                 </Stepper.Step>
             </Stepper>
-            
+
             <Group position="center" mt="xl">
                 <Button sx={{
                     display: active === 0 ? "none" : "block"
-                }} variant='default'  onClick={() =>  handleStepChange(active - 1)}>
+                }} variant='default' onClick={() => handleStepChange(active - 1)}>
                     Back
                 </Button>
-                <Button sx={(theme)=>({color:theme.colors.background_cc[0]})}  variant="light" onClick={() =>{ handleStepChange(active + 1)}}>{
+                <Button sx={(theme) => ({ color: theme.colors.background_cc[0] })} variant="light" onClick={() => { handleStepChange(active + 1) }}>{
                     active === 0 ? "Next" : "Submit"
                 }</Button>
             </Group>
