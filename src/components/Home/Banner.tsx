@@ -1,8 +1,9 @@
 "use client"
-import { Flex, Text, BackgroundImage } from '@mantine/core'
+import { Flex, Text, BackgroundImage, Button, Group } from '@mantine/core'
+import { useRouter } from 'next/navigation'
 
 export default function Banner() {
- 
+    const router = useRouter()  // Next.js router
     return (
         <Flex pos={"relative"} direction={"column"} align={"center"} justify={"center"} h="100vh">
             {/* <Flex direction="column" justify="center" align="center" w="50%">
@@ -19,28 +20,8 @@ export default function Banner() {
                 backgroundPosition: "center",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
-                zIndex: 0,
-
-                // ":after":{ // Fade edges of around the image to white
-                //     content: '""',
-                //     position: "absolute",
-                //     top: 0,
-                //     left: 0,
-                //     width: "100%",
-                //     height: "100%",
-                //     background: "linear-gradient(-90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 140%)",
-
-                // },
-                // ":before":{ // Fade edges of around the image to white
-                //     content: '""',
-                //     position: "absolute",
-                //     top: 0,
-                //     left: 0,
-                //     width: "100%",
-                //     height: "100%",
-                //     background: "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 110%)"
-                // }
-            }} src="/wallpaper.jpg">
+                zIndex: -2,
+            }} src="/wallpaper.jpg"   placeholder="blur">
 
             </BackgroundImage>
             {/* Text shadoww */}
@@ -52,7 +33,16 @@ export default function Banner() {
                 <Flex w="90%" direction={"column"}>
                     <Text sx={{ fontFamily: "Valorant Font", textShadow: "0px 0px 1xp 1px #000", lineHeight: "1em" }} size="5em" variant="h1" color="text">welcome player! </Text>
                     <Text sx={{ textShadow: "0px 0px 1xp 1px #000" }} size="2em" fw={"normal"} variant="h1" color="text">Hi! we are vvm - VALO VIBEZ MONITOR!</Text>
-
+                    <Group py={40}>
+                        
+                        <Button size='md'  sx={(theme)=>({border:"2pt solid #333333",outline:"text",transition:"all 0.2s ease-in-out", "&:hover":{
+                                backgroundColor:theme.colors.secondary[0],
+                                border:"2pt solid",
+                                borderColor:theme.colors.secondary[0],
+                                color:theme.colors.background_cc[1]
+                            }})} variant='outline' type='button' onClick={()=>router.push("/surveys")}>PARTICIPATE</Button>
+                        
+                    </Group>
                 </Flex>
 
             </Flex>

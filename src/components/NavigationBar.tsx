@@ -1,16 +1,33 @@
 "use client"
 import Link from "next/link"
 import Image from "next/image"
-import { useDisclosure } from "@mantine/hooks"
 
+import {motion, AnimateSharedLayout} from "framer-motion"
+
+import { useDisclosure } from "@mantine/hooks"
 import { MediaQuery, Drawer, Container, Flex, Text, Button, Burger, useMantineTheme, CSSObject, rem } from '@mantine/core'
 
 import Logo from "@/assets/images/0.jpg"
+import { usePathname } from "next/navigation"
 
 export default function NavigationBar() {
-    const theme = useMantineTheme()
-    const [opened, {open,close}] = useDisclosure(false);
+    const path =usePathname();
 
+    const [opened, {open,close}] = useDisclosure(false);
+    const navLinks = [
+        {
+            name: "Home",
+            href: "/",
+        },
+        {
+            name: "About",
+            href: "/about",
+        },
+        {
+            name: "Participate",
+            href: "/surveys",
+        },
+    ]
     return (
         <Flex
             justify="center"
@@ -39,14 +56,23 @@ export default function NavigationBar() {
                     visibility: 'visible',
                     display: 'flex',
                 })}>
-                    <Flex sx={{ visibility: "hidden", display:"none"  }} gap="md">
-                        <Link className="nav-button" href="/">
-                            <Text p={10} variant="h1" color="text">Home</Text>
-                        </Link>
-                        <Link className="nav-button" href="/about">
-                            <Text p={10} variant="h3" color="text">About</Text>
-                        </Link>
-                    </Flex>
+                    
+                        <Flex sx={{ visibility: "hidden", display:"none"  }} gap="md">
+                            {
+                                navLinks.map((link, index) => link.name === "Participate"?
+                                    <Link key={index} className={`nav-button primary ${path === link.href ?"active":""}`} href={link.href}>
+                                        <Text p={3} variant="h1" color="text">{link.name}</Text>
+                                        <span></span>
+                                    </Link>:
+                                    <Link key={index} className={`nav-button ${path === link.href ?"active":""}`} href={link.href}>
+                                        <Text p={3} variant="h3" color="text">{link.name}</Text>
+                                        <span></span>
+                                    </Link>
+                                )
+                            }
+                        </Flex>
+                        
+                    
                 </MediaQuery>
                 <MediaQuery smallerThan="sm" styles={(theme) => ({
                     visibility: 'visible',
@@ -59,9 +85,14 @@ export default function NavigationBar() {
                             <Flex direction={"column"} gap="md">
                                 <Link onClick={close} className="nav-button" href="/">
                                     <Text p={10} variant="h1" color="text">Home</Text>
+                                    <span></span>
                                 </Link>
                                 <Link onClick={close} className="nav-button" href="/about">
                                     <Text p={10} variant="h3" color="text">About</Text>
+                                    <span></span>
+                                </Link>
+                                <Link onClick={close} className="nav-button primary" href="/surveys">
+                                    <Text p={10} sx={{borderRadius:"15px"}}  variant="h3" color="text" bg={"primary"}>Participate</Text>
                                 </Link>
                             </Flex>
                         </Drawer>

@@ -20,7 +20,6 @@ export default function ProcessSection(){
         <motion.div
             style={{overflow:"hidden",height:"100vh",width:"100%",backgroundColor:"#F1ECE9", position:"relative", zIndex:5,display:"flex", alignItems:"center"}}
         >
-
             <motion.div style={{
                 display:"flex",
                 justifyContent:"center",
@@ -34,9 +33,6 @@ export default function ProcessSection(){
                 <CardLanding  img={HarborImg} alt="Harbor Card" description="I don't know yer" title="Hello World"/>
                 <CardLanding  img={KillJoyImg} alt="KJ Card" description="I don't know yer" title="Hello World"/>
                 <CardLanding  img={JettImg} alt="Jett Card" description="I don't know yer" title="Hello World"/>
-                
-
-
             </motion.div>
         </motion.div>
     )

@@ -18,8 +18,7 @@ export default function StyleProvider({ children}:{children: React.ReactNode}) {
             globalStyles:()=>({
                 backgroundColor: '#FFFBF5',
             }),
-            loader: 'dots',
-           
+            
 
             
           }}>

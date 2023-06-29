@@ -1,0 +1,48 @@
+/* Survey */
+
+
+/* Small screen */
+@media screen and (max-width: 700px) {
+    .survey-banner {
+        width: 100%;
+        height: 9%;
+        top: 5rem;
+        left: 0;
+        rotate: 1deg;
+
+    }
+    .survey-banner > .banner-text {
+        font-size: 2em;
+        
+    }
+}
+@media screen and (min-width: 700px) {
+    .survey-banner {
+        width:110%;
+        height:12%;
+        left:-2rem;
+        top:4rem;
+        rotate: 0.5deg;
+    }
+    .survey-banner > .banner-text {
+        font-size: 2.5em;
+        
+    }
+}
+    
+.survey-banner {
+    background-color: var(--secondary) ;
+    position:fixed;
+    z-index:20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:white;
+}
+.survey-banner > .banner-text {
+    font-weight: bold;
+    font-size: 3em;
+
+}
+    
+
