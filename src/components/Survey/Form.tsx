@@ -228,7 +228,7 @@ export default function SurveyForm() {
                         height: "65vh",
                     })} justify={"center"} align={"center"} w="100%" h="90%">
                         <Flex w={"50%"} justify={"center"} align={"center"}>
-                           <DropPhoto/>
+                           <DropPhoto />
                         </Flex>
 
                     </Flex>

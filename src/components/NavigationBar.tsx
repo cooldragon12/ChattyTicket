@@ -27,6 +27,10 @@ export default function NavigationBar() {
             name: "Participate",
             href: "/surveys",
         },
+        {
+            name: "Try it!",
+            href: "/sample",
+        },
     ]
     return (
         <Flex
@@ -59,7 +63,7 @@ export default function NavigationBar() {
                     
                         <Flex sx={{ visibility: "hidden", display:"none"  }} gap="md">
                             {
-                                navLinks.map((link, index) => link.name === "Participate"?
+                                navLinks.map((link, index) => link.name === "Participate" || link.name === "Try it!"?
                                     <Link key={index} className={`nav-button primary ${path === link.href ?"active":""}`} href={link.href}>
                                         <Text p={3} variant="h1" color="text">{link.name}</Text>
                                         <span></span>
@@ -93,6 +97,9 @@ export default function NavigationBar() {
                                 </Link>
                                 <Link onClick={close} className="nav-button primary" href="/surveys">
                                     <Text p={10} sx={{borderRadius:"15px"}}  variant="h3" color="text" bg={"primary"}>Participate</Text>
+                                </Link>
+                                <Link onClick={close} className="nav-button primary" href="/sample">
+                                    <Text p={10} sx={{borderRadius:"15px"}}  variant="h3" color="text" bg={"primary"}>Try it!</Text>
                                 </Link>
                             </Flex>
                         </Drawer>
