@@ -30,9 +30,9 @@ export default function ProcessSection(){
                 translateX:scale,
                 
             }}>
-                <CardLanding  img={HarborImg} alt="Harbor Card" description="I don't know yer" title="Hello World"/>
-                <CardLanding  img={KillJoyImg} alt="KJ Card" description="I don't know yer" title="Hello World"/>
-                <CardLanding  img={JettImg} alt="Jett Card" description="I don't know yer" title="Hello World"/>
+                <CardLanding  img={HarborImg} alt="Harbor Card" description="Our research will mostly benefit thee Valorant Community, it enlightens other Valorant players about the common toxic words used in the game and how the players usually feel while playing the game. It also benefits the Valorant Developers and future researchers who will undergo this topic." title="HELP"/>
+                <CardLanding  img={KillJoyImg} alt="KJ Card" description="Participate in Our Valorant Survey and Shape the Future of the Game!" title="Unleash Your Voice, Agents!"/>
+                <CardLanding  img={JettImg} alt="Jett Card" description="To make healthy gameplay finding the problem is better." title="Make Healthy Gameplay"/>
             </motion.div>
         </motion.div>
     )

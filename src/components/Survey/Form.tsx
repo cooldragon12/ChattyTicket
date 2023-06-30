@@ -1,10 +1,12 @@
 "use client"
 import { useState } from 'react'
 import { useForm, isEmail, matches, isNotEmpty } from '@mantine/form';
-import { Flex, TextInput, Stepper, Select, NumberInput, Checkbox, Radio, Button, Group, useMantineTheme, useMantineColorScheme, Container, Box, Divider, BackgroundImage, Text, MediaQuery } from '@mantine/core';
+import { Flex, TextInput, Stepper, Select, NumberInput, Checkbox, Radio, Button, Group, useMantineTheme, useMantineColorScheme, Container, Box, Divider, BackgroundImage, Text, MediaQuery, Modal } from '@mantine/core';
 
 import FadeSurveyImage from "@/assets/images/fade.jpg";
 import DropPhoto from './Dropzone';
+import { useDisclosure } from '@mantine/hooks';
+import { useRouter } from 'next/navigation';
 
 const SoutEastAsiaCountries = [
     "Indonesia",
@@ -63,7 +65,8 @@ const SERVER_CHOICES = [
 export default function SurveyForm() {
     const [active, setActive] = useState(0);
     const [highestStepVisited, setHighestStepVisited] = useState(active);
-
+    const [opened, {open ,close}] = useDisclosure(false)
+    const router = useRouter()
     const form = useForm({
         initialValues: {
             email: '',
@@ -133,9 +136,14 @@ export default function SurveyForm() {
             setActive(nextStep);
             setHighestStepVisited((hSC) => Math.max(hSC, nextStep));
         }
+        if (nextStep === 3) {
+            open()
+           setTimeout(() => {router.push("/")},3000)
+            
+        }
     };
     const shouldAllowSelectStep = (step: number) => highestStepVisited >= step && active !== step;
-   
+    
     return (
         <Flex direction={"column"} w={"100vw"} h={"100vh"} justify={"center"} align={"center"}>
             <Stepper mt="10rem" color="red" active={active} onStepClick={handleStepChange} breakpoint="lg">
@@ -234,6 +242,9 @@ export default function SurveyForm() {
                     </Flex>
                 </Stepper.Step>
             </Stepper>
+            <Modal opened={opened} onClose={close} withCloseButton={false}>
+                Thank you for participating!
+            </Modal>
 
             <Group position="center" mt="xl">
                 <Button sx={{

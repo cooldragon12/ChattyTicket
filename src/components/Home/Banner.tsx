@@ -33,6 +33,7 @@ export default function Banner() {
                 <Flex w="90%" direction={"column"}>
                     <Text sx={{ fontFamily: "Valorant Font", textShadow: "0px 0px 1xp 1px #000", lineHeight: "1em" }} size="5em" variant="h1" color="text">welcome player! </Text>
                     <Text sx={{ textShadow: "0px 0px 1xp 1px #000" }} size="2em" fw={"normal"} variant="h1" color="text">Hi! we are vvm - VALO VIBEZ MONITOR!</Text>
+                    <Text sx={{ textShadow: "0px 0px 1xp 1px #000" }} w="30%" size="1em" fw={"normal"} variant="h1" color="text">Thank you for being part of our research radiant respondents! Your insights power the future of Valorant Research!</Text>
                     <Group py={40}>
                         
                         <Button size='md'  sx={(theme)=>({border:"2pt solid #333333",outline:"text",transition:"all 0.2s ease-in-out", "&:hover":{

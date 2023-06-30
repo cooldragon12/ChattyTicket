@@ -1,8 +1,9 @@
+import Banner from "@/components/About/Banner";
 
-export default function About() {
+export default function AboutPage() {
     return (
-        <div>
-            About
-        </div>
+        <main>
+            <Banner/>
+        </main>
     )
 }
