@@ -1,67 +1,23 @@
 "use client"
 import { useState } from 'react'
 import { useForm, isEmail, matches, isNotEmpty } from '@mantine/form';
-import { Flex, TextInput, Stepper, Select, NumberInput, Checkbox, Radio, Button, Group, useMantineTheme, useMantineColorScheme, Container, Box, Divider, BackgroundImage, Text, MediaQuery, Modal } from '@mantine/core';
+import { Flex, TextInput, Stepper, Select, NumberInput, Checkbox, Radio, Button, Group, useMantineTheme, useMantineColorScheme, Container, Box, Divider, BackgroundImage, Text, MediaQuery, Modal, Textarea } from '@mantine/core';
 
 import FadeSurveyImage from "@/assets/images/fade.jpg";
-import DropPhoto from './Dropzone';
+import { SoutEastAsiaCountries, RANK_CHOICES,SERVER_CHOICES, EMOTIONS_CHOICES } from '@/utils/choices';
 import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
+import DropOrText from './DropOrText';
+import { FileWithPath } from '@mantine/dropzone';
+import ImagePreview from './Entry/ImagePreview';
+import TextPreview from './Entry/TextPreview';
 
-const SoutEastAsiaCountries = [
-    "Indonesia",
-    "Vietnam",
-    "Malaysia",
-    "Singapore",
-    "Cambodia",
-    "Myanmar",
-    "Philippines",
-    "Thailand",
-    "Laos",
-    "Brunei",
-    "China",
-    "India",
-    "Timor-Leste",
-    "Japan",
-    "Bangladesh",
-    "Pakistan",
-    "Taiwan",
-    "Sri Lanka",
-    "Mongolia",
-    "North Korea",
-    "South Korea",
-    "Nepal",
-    "Bhutan",
-    "Hong Kong",
-    "Macao",
-    "Maldives",
-    "Papua New Guinea"
-]
-const RANK_CHOICES = [
-    "Iron",
+type TEntry = {
+    text: string;
+    screenshot: FileWithPath;
+    description: string;
+}
 
-    "Bronze",
-
-    "Silver",
-
-    "Gold",
-
-    "Platinum",
-
-    "Diamond",
-
-    "Ascendant",
-
-    "Immortal",
-
-    "Radiant",
-]
-
-const SERVER_CHOICES = [
-    "Singapore",
-    "Tokyo",
-    "Hong Kong"
-]
 export default function SurveyForm() {
     const [active, setActive] = useState(0);
     const [highestStepVisited, setHighestStepVisited] = useState(active);
@@ -84,44 +40,45 @@ export default function SurveyForm() {
             entries: [
                 {
                     text: '',
-                    screenshot: '', // Link of the file
+                    screenshot: {} as FileWithPath, // Link of the file
                     description: ''
                 }
-            ]
-
+            ],
+            felt_from_the_trashtalks:'',
+            reason_for_talking_back:'',
         },
-        validate: {
-            email: isEmail("Invalid Email"),
-            username: matches(/^([a-zA-Z0-9]+(#[0-9]{4}))/, "Enter valid username"),
-            in_game_rank: isNotEmpty("This should not be empty."),
-            in_game_rank_level: (value, values) => {
-                if (values.in_game_rank != "Radiant" && (value > 3 && value < 1))
-                    return "This rank only have 3 levels, choose 1."
-            },
-            average_hours: (value) => {
-                if (value < 1)
-                    return "Average hour should be more than 0"
-            },
-            frequency: (value) => {
-                if (value < 1)
-                    return "Frequency should be more than 0"
-            },
-            country: (value) => {
-                if (value === "")
-                    return "This is required"
-                if (!SoutEastAsiaCountries.includes(value))
-                    return "The country should be in South East Asia"
-            },
-            server: isNotEmpty("This is required"),
-            entries: (value) => {
-                if (value.length < 0)
-                    return "Enter atleast 1"
-                value.map((entry) => {
-                    if (entry.text === "" || entry.screenshot === "")
-                        return "You should put either of two (screenshot or text)"
-                })
-            }
-        },
+        // validate: {
+        //     email: isEmail("Invalid Email"),
+        //     username: matches(/^([a-zA-Z0-9]+(#[0-9]{3,4}))/, "Enter valid username"),
+        //     in_game_rank: isNotEmpty("This should not be empty."),
+        //     in_game_rank_level: (value, values) => {
+        //         if (values.in_game_rank != "Radiant" && (value > 3 && value < 1))
+        //             return "This rank only have 3 levels, choose 1."
+        //     },
+        //     average_hours: (value) => {
+        //         if (value < 1)
+        //             return "Average hour should be more than 0"
+        //     },
+        //     frequency: (value) => {
+        //         if (value < 1)
+        //             return "Frequency should be more than 0"
+        //     },
+        //     country: (value) => {
+        //         if (value === "")
+        //             return "This is required"
+        //         if (!SoutEastAsiaCountries.includes(value))
+        //             return "The country should be in South East Asia"
+        //     },
+        //     server: isNotEmpty("This is required"),
+        //     entries: (value) => {
+        //         if (value.length < 0)
+        //             return "Enter atleast 1"
+        //         value.map((entry) => {
+        //             if (entry.text === "" || entry.screenshot === "")
+        //                 return "You should put either of two (screenshot or text)"
+        //         })
+        //     }
+        // },
         validateInputOnBlur: true
     }
     );
@@ -144,20 +101,52 @@ export default function SurveyForm() {
     };
     const shouldAllowSelectStep = (step: number) => highestStepVisited >= step && active !== step;
     
+
+    const handleDropZoneChange = (text:string,files:FileWithPath[]) => {
+        if ((text === "") && (files.length === 0)) return; 
+        
+        if (files.length > 0) {
+            const entry:TEntry[] = [];
+            files.map((file)=>{
+                entry.push({
+                    text:"",
+                    screenshot:file,
+                    description:""
+                })
+            })
+            form.setValues((values)=>{
+                const entries = values.entries
+                entries.push(...entry)
+                return {...values,entries:entries}
+            })
+        }
+        else if (text !== "")
+            form.setValues((values)=>{
+                const entryT = values.entries
+                entryT.push({
+                    text:text,
+                    screenshot:{} as FileWithPath,
+                    description:""
+                })
+                return {...values,entries:entryT}
+            })
+    };
     return (
         <Flex direction={"column"} w={"100vw"} h={"100vh"} justify={"center"} align={"center"}>
-            <Stepper mt="10rem" color="red" active={active} onStepClick={handleStepChange} breakpoint="lg">
+            <Stepper mt="10rem" color="red" active={active} onStepClick={handleStepChange} breakpoint="xl">
                 <Stepper.Step label="Basic Information" description="Contains the basic information of user and their gameplay" allowStepSelect={shouldAllowSelectStep(0)}>
+                    <MediaQuery  query='(max-width: 1979px) and (max-height: 900px)' styles={{
+                        width: "90vw",
+                        height: "80vh",
+                        padding: "0rem",
+                    }}>
                     <Flex sx={(theme) => ({
                         boxShadow: theme.shadows.md,
                         padding: "2rem",
                         borderRadius: "1rem",
                         width: "90vw",
                         height: "65vh",
-                    })} justify={"center"} align={"center"} w="100%" h="90%">
-                        <MediaQuery smallerThan={1024} styles={{
-                            width: "100%",
-                        }}>
+                    })} justify={"center"} align={"center"}>
 
                             <Flex w={"50%"} justify={"center"} align={"center"}>
                                 <Flex w="90%" direction={"column"} justify={"center"} align={"center"}>
@@ -213,7 +202,6 @@ export default function SurveyForm() {
 
                                 </Flex>
                             </Flex>
-                        </MediaQuery>
                         <MediaQuery smallerThan={1024} styles={{
                             display: "none"
                         }}>
@@ -226,6 +214,7 @@ export default function SurveyForm() {
                             </Flex>
                         </MediaQuery>
                     </Flex>
+                            </MediaQuery>
                 </Stepper.Step>
                 <Stepper.Step label="Entries" description="Input text or image related to the chat">
                     <Flex sx={(theme) => ({
@@ -236,11 +225,46 @@ export default function SurveyForm() {
                         height: "65vh",
                     })} justify={"center"} align={"center"} w="100%" h="90%">
                         <Flex w={"50%"} justify={"center"} align={"center"}>
-                           <DropPhoto />
+                            {
+                                form.values.entries.length > 1 ? 
+                                <Flex w="90%" direction={"column"} justify={"center"} align={"center"}>
+                                    <Flex w={"100%"} justify={"center"} align={"center"}>
+                                        {
+                                            form.values.entries.map((entry, index) => entry.text === "" ?<ImagePreview key={index} onRemove={()=>{}} image={entry.screenshot} />:<TextPreview index={index} key={index} onRemove={()=>{}} text={entry.text} />)
+                                        }
+                                    </Flex>
+                                </Flex>
+                                :
+                                    <Text size={"1rem"} weight={"bold"} color='dimmed'>No Entry yet!</Text>
+                                
+                            }
+                        </Flex>
+                        <Divider orientation="vertical" />
+                        <Flex w={"50%"} direction={"column"} justify={"center"} align={"center"}>
+                            <DropOrText handleInputs={handleDropZoneChange}/>
                         </Flex>
 
                     </Flex>
                 </Stepper.Step>
+                <Stepper.Step label="Review" description="Review your entries before submitting" allowStepSelect={shouldAllowSelectStep(2)}>
+                    <Flex sx={(theme) => ({
+                        boxShadow: theme.shadows.md,
+                        padding: "2rem",
+                        borderRadius: "1rem",
+                        width: "90vw",
+                        height: "65vh",
+                    })} justify={"center"} align={"center"} w="100%" h="90%">
+                        <Flex w={"50%"} justify={"center"} align={"center"}>
+                            <Select w="100%" withAsterisk label="How do you feel when you receive trashtalks from other players?" placeholder="Select what you feel" searchable data={EMOTIONS_CHOICES} {...form.getInputProps("felt_from_the_trashtalks")} />
+                        </Flex>
+                        <Flex w={"50%"} justify={"center"} align={"center"}>
+                            <Radio.Group withAsterisk label="Do you talk back to people who are toxic to you?" {...form.getInputProps("reason_for_talking_back")}>
+                                <Radio p={4} color='red' value="Yes" label="Yes" />
+                                <Radio p={4} color='red' value="No" label="No" />
+                            </Radio.Group>
+                        </Flex>
+                    </Flex>
+                </Stepper.Step>    
             </Stepper>
             <Modal opened={opened} onClose={close} withCloseButton={false}>
                 Thank you for participating!
