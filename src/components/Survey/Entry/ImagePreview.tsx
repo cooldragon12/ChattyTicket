@@ -5,16 +5,19 @@ import { HiDocumentRemove } from "react-icons/hi";
 
 
 export type ImagePreviewProps = {
-    image: string | FileWithPath;
+    image: FileWithPath;
     onRemove: () => void;
 };
 
-const ImagePreview = ({ image, onRemove }:ImagePreviewProps) => {
+const ImagePreview = ({ image, onRemove }: ImagePreviewProps) => {
+
     return (
-        <div className="image-preview">
-            <img src={image.toString()} alt="preview" />
-            <ActionIcon onClick={onRemove}><HiDocumentRemove/></ActionIcon>
-        </div>
+        <>
+            <div className="image-preview">
+                <ActionIcon onClick={onRemove}><HiDocumentRemove /></ActionIcon>
+                <img src={window.URL.createObjectURL(image)} alt={`preview-${image.name}`} width={200} height={100} />
+            </div>
+        </>
     );
 };
 

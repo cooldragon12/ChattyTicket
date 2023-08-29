@@ -75,6 +75,7 @@
    
     display: flex;
     flex-direction: column;
+    
 }
 .nav-button:hover {
   background-color: var(--secondary);
@@ -82,7 +83,8 @@
 }
 .nav-button.primary:hover {
   background-color: var(--accent);
-  border:1px solid #FFFBF5;
+  outline-offset: 3px;
+  outline:2px solid #ffffff;
 }
 .nav-button.primary{
   background-color: var(--secondary);
@@ -95,8 +97,8 @@
     text-decoration: none ;
     padding-left: .3rem;
     padding-right: .3rem; 
-  border:1px solid #fffbf500;
-
+  outline:2px solid #ffffff0a;
+  outline-offset: -5px;
 }
 .nav-button.primary.active{
  display: none;
