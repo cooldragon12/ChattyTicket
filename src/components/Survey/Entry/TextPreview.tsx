@@ -11,8 +11,8 @@ export type TextPreviewProps = {
 const TextPreview = ({text,index, onRemove}:TextPreviewProps)=>{
     return (
         <div className="image-preview">
-            <div>Text {index}</div>
             <ActionIcon onClick={onRemove}><HiDocumentRemove/></ActionIcon>
+            <div>Text {index}</div>
         </div>
     )
 }

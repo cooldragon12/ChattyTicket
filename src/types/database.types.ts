@@ -16,6 +16,7 @@ export interface Database {
           id: number
           player_id: number
           screenshot: string | null
+          text: string | null
           toxicity: string | null
         }
         Insert: {
@@ -24,6 +25,7 @@ export interface Database {
           id?: number
           player_id: number
           screenshot?: string | null
+          text?: string | null
           toxicity?: string | null
         }
         Update: {
@@ -32,12 +34,14 @@ export interface Database {
           id?: number
           player_id?: number
           screenshot?: string | null
+          text?: string | null
           toxicity?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "Entry_player_id_fkey"
             columns: ["player_id"]
+            isOneToOne: false
             referencedRelation: "PlayerDemography"
             referencedColumns: ["id"]
           }
@@ -59,6 +63,7 @@ export interface Database {
           often_server: string | null
           province: string | null
           responding_to_behavior: string | null
+          username: string | null
         }
         Insert: {
           age?: number | null
@@ -75,6 +80,7 @@ export interface Database {
           often_server?: string | null
           province?: string | null
           responding_to_behavior?: string | null
+          username?: string | null
         }
         Update: {
           age?: number | null
@@ -91,6 +97,7 @@ export interface Database {
           often_server?: string | null
           province?: string | null
           responding_to_behavior?: string | null
+          username?: string | null
         }
         Relationships: []
       }

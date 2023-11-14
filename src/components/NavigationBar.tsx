@@ -29,7 +29,7 @@ export default function NavigationBar() {
         },
         {
             name: "Try it!",
-            href: "/sample",
+            href: "/chat",
         },
     ]
     return (

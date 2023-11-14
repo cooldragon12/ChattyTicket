@@ -2,7 +2,7 @@ import zod, { z } from 'zod';
 
 export const surveySchema = zod.object({
     email: zod.string().email(),
-    name: zod.string(),
+    name: zod.string().nullable().optional(),
     gender: zod.string().optional(),
     age: zod.number().optional(),
     country: zod.string(),
@@ -15,15 +15,10 @@ export const surveySchema = zod.object({
     server: zod.string(),
     felt_from_the_trashtalks: zod.string(),
     reason_for_talking_back: zod.string(),
+    entries: zod.array(zod.object({
+        text: zod.string().optional(),
+        screenshot: zod.string().optional()
+    })).optional(),
 });
 
-export type SurveyInit = z.infer<typeof surveySchema>;
-
-export interface Survey extends SurveyInit {
-    entries: [
-        {
-            text: string,
-            screenshot: File,
-        }
-    ]
-}
+export type SurveySchemaType = z.infer<typeof surveySchema>;

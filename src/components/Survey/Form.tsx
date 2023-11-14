@@ -1,6 +1,6 @@
 "use client"
-import { use, useEffect, useState, useCallback } from 'react'
-import { useForm, isEmail, matches, isNotEmpty } from '@mantine/form';
+import { useState, useCallback } from 'react'
+import { useForm, zodResolver } from '@mantine/form';
 import { Flex, TextInput, Stepper, Select, NumberInput, Checkbox, Radio, Button, Group, useMantineTheme, useMantineColorScheme, Container, Box, Divider, BackgroundImage, Text, MediaQuery, Modal, Textarea, FileInput } from '@mantine/core';
 
 import FadeSurveyImage from "@/assets/images/fade.jpg";
@@ -9,23 +9,22 @@ import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import ImagePreview from './Entry/ImagePreview';
 import TextPreview from './Entry/TextPreview';
-
 import { supabase_client } from '@/utils/supabase';
-import { Survey } from '@/schema/survey';
-type TEntry = {
-    text: string;
-    screenshot: File;
-}
+import { SurveySchemaType, surveySchema } from '@/schema/survey';
+
+import { decode } from "base64-arraybuffer";
+
+import toast from '@/components/Toast';
 
 export default function SurveyForm() {
     const [text, setText] = useState("")
-    const [files, setFiles] = useState<File[]>([])
+    const [files, setFiles] = useState<File | null>(null)
     const [active, setActive] = useState(0);
     const [highestStepVisited, setHighestStepVisited] = useState(active);
     const [opened, { open, close }] = useDisclosure(false)
     const router = useRouter()
 
-    const form = useForm<Survey>({
+    const form = useForm<SurveySchemaType>({
         initialValues: {
             email: '',
             name: '',
@@ -43,40 +42,6 @@ export default function SurveyForm() {
             felt_from_the_trashtalks: '',
             reason_for_talking_back: '',
         },
-
-        validate: {
-            email: isEmail("Invalid Email"),
-            username: matches(/^([a-zA-Z0-9]+(#[0-9]{3,4}))/, "Enter valid username"),
-            in_game_rank: isNotEmpty("This should not be empty."),
-            in_game_rank_level: (value, values) => {
-                if (values.in_game_rank != "Radiant" && (value > 3 && value < 1))
-                    return "This rank only have 3 levels, choose 1."
-            },
-            average_hours: (value) => {
-                if (value < 1)
-                    return "Average hour should be more than 0"
-            },
-            frequency: (value) => {
-                if (value < 1)
-                    return "Frequency should be more than 0"
-            },
-            country: (value) => {
-                if (value === "")
-                    return "This is required"
-                if (!SoutEastAsiaCountries.includes(value))
-                    return "The country should be in South East Asia"
-            },
-            server: isNotEmpty("This is required"),
-            entries: (value) => {
-                if (value.length < 0)
-                    return "Enter atleast 1"
-                value.map((entry) => {
-                    if (entry.text === "" || entry.screenshot === null)
-                        return "You should put either of two (screenshot or text)"
-                })
-            }
-        },
-        validateInputOnBlur: true
     }
     );
 
@@ -100,81 +65,119 @@ export default function SurveyForm() {
 
     const shouldAllowSelectStep = (step: number) => highestStepVisited >= step && active !== step;
     const cancelFileInput = () => {
-        setFiles([])
+        setFiles(null)
         setText("")
     }
-    /**
-     * 
-     */
-    const handleDropZoneChange = useCallback(() => {
-        if ((text === "") && (files.length === 0)) return;
 
-        if (files.length > 0) {
-            let entry: TEntry[] = [];
-            files.map((file) => {
-                entry.push({
-                    text: "",
-                    screenshot: file,
+    const handleDropZoneChange = useCallback(() => {
+        // if ((text === "") && (files.length === 0)) return;
+
+        if (files !== null) {
+            const reader = new FileReader();
+            reader.readAsDataURL(files)
+            reader.onload = () => {
+                form.setValues((values) => {
+                    return {
+                        ...values, entries: [...values.entries, {
+                            text: "",
+                            screenshot: reader.result as string,
+                        }]
+                    }
                 })
-            })
-            form.setValues((values) => {
-                const entryT = values.entries
-                entry.map((entry) => entryT?.push(entry))
-                return { ...values, entries: entryT }
-            })
+            }
         }
         else if (text !== "")
             form.setValues((values) => {
-                const entryT = values.entries
-                entryT?.push({
-                    text: text,
-                    screenshot: {} as File,
-                })
-                return { ...values, entries: entryT }
+                return {
+                    ...values, entries: [...values.entries, {
+                        text: text,
+                        screenshot: "",
+                    }]
+                }
             })
         setText("")
-        setFiles([])
+        setFiles(null)
     }, [files, text])
+
+    const handleRemoveEntry = (index: number) => {
+        form.setValues((values) => {
+            const entryT = values.entries
+            entryT?.splice(index, 1)
+            return { ...values, entries: entryT }
+        })
+    }
     /**
      * 
      * @description This function is used to handle the inputs of the user
      */
     const handleSubmit = async () => {
-
-        const {data:data_demo, error} = await supabase_client.schema('public').from("PlayerDemography").insert({
-            email: form.values.email,
-            name: form.values.name,
-            age: form.values.age,
-            country: form.values.country,
-            province: form.values.province,
-            username: form.values.username,
-            average_hours: form.values.average_hours,
-            frequency: form.values.frequency,
-            in_game_rank: form.values.in_game_rank,
-            in_game_rank_level: form.values.in_game_rank_level,
-            often_server: form.values.server,
-            responding_to_behavior: form.values.reason_for_talking_back,
-            emotion: form.values.felt_from_the_trashtalks,
-            gender: form.values.gender
-        }).select().single()
-        if (error) {
-            console.log(error)
-            return;
-        }
-    
-        form.values.entries.map(async (entry) => {
-            console.log(entry.screenshot)
-            const { data, error } = await supabase_client.storage.from("Entries_Screenshots").upload(entry.screenshot.name, entry.screenshot)
-            const response_entries = await supabase_client.schema('public').from("Entry").insert({
-                player_id: data_demo?.id,
-                screenshot: data?.path,
-                text: entry.text,
-            });
+        try {
+            const { data: data_demo, error } = await supabase_client.schema('public').from("PlayerDemography").insert({
+                email: form.values.email,
+                name: form.values.name,
+                age: form.values.age,
+                country: form.values.country,
+                province: form.values.province,
+                username: form.values.username,
+                average_hours: form.values.average_hours,
+                frequency: form.values.frequency,
+                in_game_rank: form.values.in_game_rank,
+                in_game_rank_level: form.values.in_game_rank_level,
+                often_server: form.values.server,
+                responding_to_behavior: form.values.reason_for_talking_back,
+                emotion: form.values.felt_from_the_trashtalks,
+                gender: form.values.gender
+            }).select().single()
             if (error) {
-                console.log(response_entries.error)
-                return;
+                throw new Error("Sorry, we can't process your submission")
             }
-        })
+
+            form.values.entries.map(async (entry) => {
+                if (entry.screenshot !== "") {
+                    const image_type = entry.screenshot
+                        .split(";base64,")[0]
+                        .split("/")[1];
+                    const info = `entry/${data_demo.username.split("#")[0]}_${new Date().getTime().toString()}.${image_type}`
+                    console.log(info)
+                    const { data, error } = await supabase_client.storage
+                    .from("Entries_Screenshots")
+                    .upload(info, decode(entry.screenshot.split("base64,")[1]),
+                    {
+                        contentType: `image/${image_type}`,
+                        upsert: false,
+                        cacheControl: "3600",
+                    }
+                    );
+                    const image_link = supabase_client.storage
+                        .from("Entries_Screenshots")
+                        .getPublicUrl(data.path);
+                    const response_entries = await supabase_client.schema('public').from("Entry").insert({
+                        player_id: data_demo?.id,
+                        screenshot: image_link.data.publicUrl
+                    });
+                    if (error) {
+                        throw new Error("Sorry, we can't process your submission")
+                    }
+                    if (response_entries.error) {
+                        throw new Error("Sorry, we can't process your submission")
+                    }
+                } else if (entry.text !== "") {
+                    const response_entries = await supabase_client.schema('public').from("Entry").insert({
+                        player_id: data_demo?.id,
+                        text: entry.text
+                    });
+                    if (response_entries.error) {
+                        throw new Error("Sorry, we can't process your submission")
+                    }
+                }
+                // toast({ 
+                //     type: "success", 
+                //     message:"Congratulation!! you've successfully finished the survey" });
+                router.push("/surveys/success")
+            })
+        } catch (e) {
+            // toast({ type: "error", message: e.message });
+        }
     }
 
     return (
@@ -272,10 +275,10 @@ export default function SurveyForm() {
                     })} justify={"center"} align={"center"} w="100%" h="90%">
                         <Flex w={"50%"} justify={"center"} align={"center"} wrap={"wrap"}>
                             {
-                                form.values.entries.length > 0?
+                                form.values.entries.length > 0 ?
                                     <Flex w="90%" direction={"column"} justify={"center"} align={"center"}>
                                         {
-                                            form.values.entries.map((entry, index) => entry.text === "" ? <ImagePreview key={index} onRemove={() => {console.log("remove function called")}} image={entry.screenshot} /> : <TextPreview index={index} key={index} onRemove={() => { }} text={entry.text} />)
+                                            form.values.entries.map((entry, index) => entry.text === "" ? <ImagePreview key={index} onRemove={() => handleRemoveEntry(index)} image={entry.screenshot} /> : <TextPreview index={index} key={index} onRemove={() => { }} text={entry.text} />)
                                         }
                                     </Flex>
                                     :
@@ -286,25 +289,21 @@ export default function SurveyForm() {
                         <Divider orientation="vertical" />
                         <Flex w={"50%"} direction={"column"} justify={"center"} align={"center"}>
                             <Flex >
-                                <Flex w={text.length > 0 || files.length > 0 ? "50%" : "0%"} h={"90%"} wrap="wrap">
+                                <Flex w={text.length > 0 || files?.type !== "" ? "50%" : "0%"} h={"90%"} wrap="wrap">
                                     <Container style={{ overflowY: "hidden", height: "100%" }} >
                                         {
-                                            files.map((file, index) => {
-                                                return (
-                                                    <img width={"40%"} height={"60%"} key={index} src={URL.createObjectURL(file)} />
-                                                )
-                                            })
+                                            files !== null ? <img width={"40%"} height={"60%"} src={URL.createObjectURL(files)} /> : null
                                         }
                                     </Container>
                                 </Flex>
-                                <FileInput multiple value={files} onChange={setFiles} accept="image/png,image/jpeg" label="Upload files" placeholder="Upload files" />
+                                <FileInput onChange={setFiles} value={files} accept="image/png,image/jpeg" label="Upload files" placeholder="Upload files" />
                             </Flex>
                             <Text>or</Text>
                             <Textarea value={text} onChange={(e) => setText(e.target.value)} w="70%" h="70%" placeholder="Write your entry here: (Team) MeYou: on C ....." />
                             <Group>
-                                <Button disabled={text.length > 0 || files.length > 0 ? false : true} onClick={handleDropZoneChange} color="red" variant="filled" mt="1rem"  >Add Entry</Button>
+                                <Button disabled={text.length > 0 || files !== null ? false : true} onClick={() => handleDropZoneChange()} color="red" variant="filled" mt="1rem"  >Add Entry</Button>
                                 {
-                                    files.length > 0 || text.length > 0 ? <Button onClick={cancelFileInput} color="red" variant="default" mt="1rem" >Cancel</Button> : null
+                                    files !== null || text.length > 0 ? <Button onClick={cancelFileInput} color="red" variant="default" mt="1rem" >Cancel</Button> : null
                                 }
                             </Group>
                         </Flex>
