@@ -11,7 +11,7 @@ export default function Home() {
       <Banner/>
       <ProcessSection/>
       <TransitionSection/>
-      <AboutOverview/>
+      {/* <AboutOverview/> */}
 
     </main>
   )

@@ -13,7 +13,7 @@ import { supabase_client } from '@/utils/supabase';
 import { SurveySchemaType, surveySchema } from '@/schema/survey';
 
 import { decode } from "base64-arraybuffer";
-
+import classes from "./Form.module.css"
 import toast from '@/components/Toast';
 
 export default function SurveyForm() {
@@ -25,11 +25,12 @@ export default function SurveyForm() {
     const router = useRouter()
 
     const form = useForm<SurveySchemaType>({
+        
         initialValues: {
             email: '',
             name: '',
             gender: '',
-            age: 1,
+            age: 18,
             country: '',
             province: '',
             username: '',
@@ -42,24 +43,21 @@ export default function SurveyForm() {
             felt_from_the_trashtalks: '',
             reason_for_talking_back: '',
         },
-    }
+        validate: zodResolver(surveySchema),
+        validateInputOnBlur: true,
+        }
     );
-
+    
 
     const handleStepChange = (nextStep: number) => {
-        const isOutOfBounds = nextStep > 3 || nextStep < 0;
+        // const isOutOfBounds = nextStep > 3 || nextStep < 0;
         form.validate();
-
-        if (isOutOfBounds) {
-            return;
-        }
+        // if (isOutOfBounds) {
+        //     return;
+        // }
         if (form.isValid("username") && form.isValid("email") && form.isValid("Country") && form.isValid("in_game_rank") && form.isValid("in_game_rank_level") && form.isValid("average_hours") && form.isValid("frequency") && form.isValid("server")) {
             setActive(nextStep);
             setHighestStepVisited((hSC) => Math.max(hSC, nextStep));
-        }
-        if (nextStep === 3 && form.isValid("felt_from_the_trashtalks") && form.isValid("reason_for_talking_back")) {
-            open()
-            setTimeout(() => { router.push("/") }, 3000)
         }
     };
 
@@ -173,7 +171,7 @@ export default function SurveyForm() {
                 // toast({ 
                 //     type: "success", 
                 //     message:"Congratulation!! you've successfully finished the survey" });
-                router.push("/surveys/success")
+                setTimeout(() => { router.push("/surveys/success") }, 3000)
             })
         } catch (e) {
             // toast({ type: "error", message: e.message });
@@ -204,7 +202,7 @@ export default function SurveyForm() {
                                             w="100%"
                                             label="Name"
                                             placeholder="John Doe (Optional)"
-
+                                            
                                             {...form.getInputProps("name")}
                                         />
                                         <TextInput
@@ -235,7 +233,7 @@ export default function SurveyForm() {
                                         </Radio.Group>
                                     </Flex>
                                     <Flex gap="1rem" w={"100%"}>
-                                        <Select w="100%" withAsterisk label="Country" placeholder="Select Country (e.i Philippines)" searchable data={SoutEastAsiaCountries} {...form.getInputProps("country")} />
+                                        <Select w="100%"   withAsterisk label="Country" placeholder="Select Country (e.i Philippines)" searchable data={SoutEastAsiaCountries} {...form.getInputProps("country")} />
                                         <TextInput w="100%" label="Province" placeholder="Province (Optional)" {...form.getInputProps("province")} />
                                     </Flex>
                                     <Divider label="Game Related" w="100%" m="1rem" />
@@ -245,7 +243,7 @@ export default function SurveyForm() {
                                     </Flex>
                                     <Flex gap="1rem" w={"100%"}>
                                         <Select w="100%" withAsterisk label="Rank" placeholder="Select Rank (Radiant)" searchable data={RANK_CHOICES} {...form.getInputProps("in_game_rank")} />
-                                        <NumberInput w="100%" min={1} label="Rank Level" disabled={form.values.in_game_rank === "Radiant" ? true : false} withAsterisk {...form.getInputProps("in_game_rank_level")} />
+                                        <NumberInput w="100%" min={1} max={3} label="Rank Level" disabled={form.values.in_game_rank === "Radiant" ? true : false} withAsterisk {...form.getInputProps("in_game_rank_level")} />
                                     </Flex>
                                     <Select withAsterisk w={"100%"} label="Your often use server" placeholder="Hong Kong" searchable data={SERVER_CHOICES} {...form.getInputProps("server")} />
 
@@ -310,6 +308,22 @@ export default function SurveyForm() {
 
                     </Flex>
                 </Stepper.Step>
+                <Stepper.Step label="Reflection" description="Last 2 questions reaction for the gameplay you experience" allowStepSelect={shouldAllowSelectStep(2)}>
+                    <Flex sx={(theme) => ({
+                        padding: "2rem",
+                        borderRadius: "1rem",
+                        width: "90vw",
+                        height: "65vh",
+                    })} justify={"center"} align={"center"} w="100%" h="90%">
+                        <Flex w={"50%"} justify={"center"} align={"center"}>
+                            <Select w="100%" withAsterisk label="How do you feel when you receive trashtalks from other players?" placeholder="Select what you feel" searchable data={EMOTIONS_CHOICES} {...form.getInputProps("felt_from_the_trashtalks")} />
+                            <Radio.Group withAsterisk label="Do you talk back to people who are toxic to you?" {...form.getInputProps("reason_for_talking_back")}>
+                                <Radio p={4} color='red' value="Yes" label="Yes" />
+                                <Radio p={4} color='red' value="No" label="No" />
+                            </Radio.Group>
+                        </Flex>
+                    </Flex>
+                </Stepper.Step>
                 <Stepper.Step label="Review" description="Review your entries before submitting" allowStepSelect={shouldAllowSelectStep(2)}>
                     <Flex sx={(theme) => ({
 
@@ -318,21 +332,26 @@ export default function SurveyForm() {
                         width: "90vw",
                         height: "65vh",
                     })} justify={"center"} align={"center"} w="100%" h="90%">
-                        <Flex w={"50%"} justify={"center"} align={"center"}>
-                            <Select w="100%" withAsterisk label="How do you feel when you receive trashtalks from other players?" placeholder="Select what you feel" searchable data={EMOTIONS_CHOICES} {...form.getInputProps("felt_from_the_trashtalks")} />
-                        </Flex>
-                        <Flex w={"50%"} justify={"center"} align={"center"}>
-                            <Radio.Group withAsterisk label="Do you talk back to people who are toxic to you?" {...form.getInputProps("reason_for_talking_back")}>
-                                <Radio p={4} color='red' value="Yes" label="Yes" />
-                                <Radio p={4} color='red' value="No" label="No" />
-                            </Radio.Group>
+                        {/* Review of every input */}
+                        <Flex w={"50%"} justify={"center"} align={"center"} wrap={"wrap"}>
+                            {
+                                form.values.entries.length > 0 ?
+                                    <Flex w="90%" direction={"column"} justify={"center"} align={"center"}>
+                                        {
+                                            form.values.entries.map((entry, index) => entry.text === "" ? <ImagePreview key={index} onRemove={() => handleRemoveEntry(index)} image={entry.screenshot} /> : <TextPreview index={index} key={index} onRemove={() => { }} text={entry.text} />)
+                                        }
+                                    </Flex>
+                                    :
+                                    <Text size={"1rem"} weight={"bold"} color='dimmed'>No Entry yet!</Text>
+
+                            }
                         </Flex>
                     </Flex>
                 </Stepper.Step>
             </Stepper>
-            <Modal opened={opened} onClose={close} withCloseButton={false}>
+            {/* <Modal opened={opened} onClose={close} withCloseButton={false}>
                 Thank you for participating!
-            </Modal>
+            </Modal> */}
 
             <Group position="center" mt="xl">
                 <Button sx={{
@@ -340,8 +359,23 @@ export default function SurveyForm() {
                 }} variant='default' onClick={() => handleStepChange(active - 1)}>
                     Back
                 </Button>
-                <Button sx={(theme) => ({ color: theme.colors.background_cc[0] })} variant="light" onClick={() => { active < 2 ? handleStepChange(active + 1) : handleSubmit() }}>{
-                    active < 2 ? "Next" : "Submit"
+                <Button sx={(theme) => ({ color: theme.colors.background_cc[0] })} variant="light" onClick={() => { 
+                    switch (active){
+                        case 0:
+                            handleStepChange(active + 1)
+                            break;
+                        case 1:
+                            handleStepChange(active + 1)
+                            break;
+                        case 2:
+                            handleStepChange(active + 1)
+                            break;
+                        case 3:
+                            handleSubmit()
+                            break;
+                    }
+                  }}>{
+                    active < 2 ? "Next" : active === 2 ? "Review" : "Submit"
                 }</Button>
             </Group>
         </Flex>
