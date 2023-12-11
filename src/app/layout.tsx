@@ -22,6 +22,7 @@ export default async function RootLayout(props: {
   return (
     <StyleProvider>
         <html lang="en">
+          <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"></meta>
           <body className={inter.className}>
             <Suspense unstable_expectedLoadTime={1000} fallback={<Loading/>}>
               <NavigationBar />
