@@ -95,7 +95,7 @@ export default function SurveyForm() {
             })
         setText("")
         setFiles(null)
-    }, [files, text])
+    }, [files, text, form])
 
     const handleRemoveEntry = (index: number) => {
         form.setValues((values) => {

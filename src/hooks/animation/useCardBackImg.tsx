@@ -32,7 +32,7 @@ const useCardBackImg = (isOpen?: boolean )=>{
             duration:0.3,
             delay: isOpen ? stagger(0.1, { startDelay: 0.1 }) : 0
         })
-    }, [isOpen])
+    }, [isOpen, animate])
 
     return scope
 }

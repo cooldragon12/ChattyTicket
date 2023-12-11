@@ -29,7 +29,7 @@ const SampleForm = () => {
         if(typing) return;
         // if text is empty, don't send request
         if(!chat_text) {setTyping(false); return;}
-    },[chat_text])
+    },[chat_text, typing])
     async function sendRequest(text:string){
         if (!(text.length > 0)) return;
         setTyping(true);
