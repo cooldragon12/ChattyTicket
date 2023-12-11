@@ -9,7 +9,7 @@ const nextConfig = {
           {
             source: '/api/:path*',
             // Trailing slash is optional, see below
-            destination: `${process.env.NEXT_AWS_URL_API}/api/:path*/`
+            destination: `${process.env.NEXT_PUCLIC_AWS_URL_API}/api/:path*/`
           }
         ]
       },
