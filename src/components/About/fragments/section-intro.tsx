@@ -39,10 +39,13 @@ const DescriptionFragment = ({ name, description, ign, rank, agent }) => {
 const PhotoFragment = ({ img }) => {
     return (
         <Flex w={"50%"} align={"center"} justify={"center"} pos={"relative"} >
-            <Box w="35vw" h={"60vh"} sx={{
-                borderRadius: "16px",
+            <Box w="30vw" h={"55vh"} sx={{
+                borderRadius: "3%",
+                
             }}>
-                <BackgroundImage src={img} bgr={"no-repeat"} bgsz={"contain"} w={"100%"} h={"100%"} />
+                <BackgroundImage src={img} sx={{
+                    borderRadius: "3%",
+                }} bgr={"no-repeat"} bgsz={"cover"} w={"100%"} h={"100%"} />
             </Box>
 
             {/* Background */}

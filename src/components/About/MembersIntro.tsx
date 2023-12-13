@@ -1,8 +1,11 @@
 "use client"
-import { BackgroundImage, Box, Container, Flex, Text } from "@mantine/core";
+import { BackgroundImage, Flex, Text } from "@mantine/core";
 
-import IceBox from "@/assets/images/icebox.jpg";
 import SectionIntro from "./fragments/section-intro";
+import IceBox from "@/assets/images/icebox.jpg";
+import JPhoto from "@/assets/devs/johndel.jpg";
+import KPhoto from "@/assets/devs/kenneth.jpg";
+import CPhoto from "@/assets/devs/cass.jpg";
 const Banner = () => {
     return(
         <Flex  h={"90vh"} direction={"column"} px={"5rem"} py={"3rem"}>
@@ -35,7 +38,7 @@ const Banner = () => {
                     ign={"XH Calypso #NYX"}
                     rank={"Platinum"}
                     agent={"Reyna"}
-                    img={IceBox.src}
+                    img={CPhoto.src}
                     side="left"
                 />
                 <SectionIntro 
@@ -44,7 +47,7 @@ const Banner = () => {
                     ign={"neverland#john"}
                     rank={"Platinum 1"}
                     agent={"Viper"}
-                    img={IceBox.src}
+                    img={JPhoto.src}
                     side="right"
                 />
                 <SectionIntro 
@@ -53,7 +56,7 @@ const Banner = () => {
                     ign={"k3nbot#1212"}
                     rank={"Gold"}
                     agent={"Reyna"}
-                    img={IceBox.src}
+                    img={KPhoto.src}
                     side="left"
                 />
             </Flex>
